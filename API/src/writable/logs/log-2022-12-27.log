@@ -1,0 +1,22 @@
+ERROR - 2022-12-27 12:25:31 --> mysqli_sql_exception: Table 'ci4.todo_lists' doesn't exist in /var/www/html/system/Database/MySQLi/Connection.php:292
+Stack trace:
+#0 /var/www/html/system/Database/MySQLi/Connection.php(292): mysqli->query('SELECT *\nFROM `...', 0)
+#1 /var/www/html/system/Database/BaseConnection.php(666): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 /var/www/html/system/Database/BaseConnection.php(593): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 /var/www/html/system/Database/BaseBuilder.php(1585): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 /var/www/html/system/Model.php(223): CodeIgniter\Database\BaseBuilder->get()
+#5 /var/www/html/system/BaseModel.php(585): CodeIgniter\Model->doFindAll(0, 0)
+#6 /var/www/html/app/Controllers/Test.php(20): CodeIgniter\BaseModel->findAll()
+#7 /var/www/html/system/CodeIgniter.php(927): App\Controllers\Test->test()
+#8 /var/www/html/system/CodeIgniter.php(482): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Test))
+#9 /var/www/html/system/CodeIgniter.php(351): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 /var/www/html/public/index.php(67): CodeIgniter\CodeIgniter->run()
+#11 {main}
+CRITICAL - 2022-12-27 12:25:31 --> Call to a member function getResult() on bool
+in SYSTEMPATH/Model.php on line 224.
+ 1 SYSTEMPATH/BaseModel.php(585): CodeIgniter\Model->doFindAll(0, 0)
+ 2 APPPATH/Controllers/Test.php(20): CodeIgniter\BaseModel->findAll()
+ 3 SYSTEMPATH/CodeIgniter.php(927): App\Controllers\Test->test()
+ 4 SYSTEMPATH/CodeIgniter.php(482): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Test))
+ 5 SYSTEMPATH/CodeIgniter.php(351): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 FCPATH/index.php(67): CodeIgniter\CodeIgniter->run()
