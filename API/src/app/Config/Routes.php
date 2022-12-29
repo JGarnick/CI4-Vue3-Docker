@@ -36,10 +36,9 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
-// $routes->group('api', ['filter' => 'cors'], static function ($routes) {
-//     $routes->add('test', function(){ return ["Hello!" => "FooBar"];});
-// });
-$routes->get('test', 'Test::test');
+$routes->group('api', static function ($routes) {
+    $routes->get('lists', "TodoListController::index");
+});
 
 /*
  * --------------------------------------------------------------------

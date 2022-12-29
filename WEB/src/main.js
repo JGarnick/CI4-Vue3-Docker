@@ -14,8 +14,8 @@ const router = createRouter({
             component: () => import('./pages/Dashboard.vue'),
         },
         {
-            path: '/test',
-            component: () => import('./pages/Test.vue')
+            path: '/lists',
+            component: () => import('./pages/Lists/Lists.vue')
         }
     ],
 });
