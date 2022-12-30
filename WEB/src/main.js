@@ -1,10 +1,13 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
 import './style.css'
 import App from './App.vue'
 
 // Vuetify
 import {vuetify} from './plugins/vuetify'
+
+const pinia = createPinia()
 
 const router = createRouter({
     history: createWebHistory(),
@@ -20,4 +23,8 @@ const router = createRouter({
     ],
 });
 
-createApp(App).use(vuetify).use(router).mount('#app')
+createApp(App)
+.use(vuetify)
+.use(router)
+.use(pinia)
+.mount('#app')

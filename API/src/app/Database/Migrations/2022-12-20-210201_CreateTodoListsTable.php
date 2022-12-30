@@ -17,7 +17,7 @@ class CreateTodoListsTable extends Migration
             ],
             "description" => [
                 "type" => "TEXT",
-                "null" => true
+                "default" => ""
             ],
             'created_at' => [
                 'type'    => 'TIMESTAMP',

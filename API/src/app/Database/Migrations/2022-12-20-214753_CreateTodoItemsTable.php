@@ -21,7 +21,11 @@ class CreateTodoItemsTable extends Migration
             ],
             "description" => [
                 "type" => "TEXT",
-                "null" => true
+                "default" => ""
+            ],
+            "content" => [
+                "type" => "TEXT",
+                "default" => ""
             ]
         ]);
 

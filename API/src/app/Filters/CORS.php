@@ -15,7 +15,7 @@ class CORS implements FilterInterface
     ];
 
     protected $allowed_domains = [
-        "http://localhost:81"
+        "*"
     ];
 
     function __construct(){
