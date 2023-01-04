@@ -38,6 +38,7 @@ $routes->set404Override();
 
 $routes->group('api', static function ($routes) {
     $routes->get('lists', "TodoListController::index");
+    $routes->post('lists', 'TodoListController::create');
 });
 
 /*

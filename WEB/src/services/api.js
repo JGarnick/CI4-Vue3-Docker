@@ -1,3 +1,5 @@
+import useEventBus from "../composables/eventBus";
+const {emit} = useEventBus()
 
 const API = class{
     #base_url
@@ -14,10 +16,11 @@ const API = class{
                     console.log("Data:", data);
                     return data;
                 });
-            
+                
+            emit("triggerToast", {type: 'success', text: response_data.details})
             return response_data.details;
         }catch(error){
-
+            emit("triggerToast", {type: 'error', text: 'Hello World'})
         }
     }
 

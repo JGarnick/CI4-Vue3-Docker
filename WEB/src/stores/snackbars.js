@@ -4,11 +4,10 @@ export const useSnackbarsStore = defineStore('snackbars', {
     state: () => ({
         location: "top",
         message: "This is a default alert",
-        variant: "flat"
     }),
     actions: {
-        trigger(){
-
+        trigger(type = "success", message = 'This is a snackbar message'){
+            
         }
     }
 })

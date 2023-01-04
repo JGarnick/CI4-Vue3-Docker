@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
+import { SnackbarService, Vue3Snackbar } from "vue3-snackbar";
+import "vue3-snackbar/dist/style.css";
 import './style.css'
 import App from './App.vue'
 
@@ -23,8 +25,10 @@ const router = createRouter({
     ],
 });
 
-createApp(App)
+const app = createApp(App)
 .use(vuetify)
 .use(router)
 .use(pinia)
+.use(SnackbarService)
+.component("vue3-snackbar", Vue3Snackbar)
 .mount('#app')

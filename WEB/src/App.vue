@@ -1,37 +1,33 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import {useSnackbar} from 'vue3-snackbar'
 import TheHeader from './components/TheHeader.vue';
 import TheLeftSideNavigation from './components/TheLeftSideNavigation.vue';
 import TheMainContent from './components/TheMainContent.vue';
+import useEventBus from './composables/eventBus';
 
 const drawer = ref(false)
-const defaultSnackbar = {
-  location: "top right",
-  absolute: true,
-  variant:"flat",
-  color: "success",
-  timeout: 2000
-}
-const snackbarShow = ref(false)
+const snackbar = useSnackbar()
+const {bus} = useEventBus()
 
 function changeDrawer(){
   drawer.value = !drawer.value
 }
+
+watch(()=>bus.value.get('triggerToast'), (val)=>{
+  const [toast] = val ?? []
+  snackbar.add(toast)
+})
 
 </script>
 
 <template>
   <VApp theme="dark">
     <TheHeader @drawerChange="changeDrawer"></TheHeader>
-    <!-- <VBtn class="pt-16" @click="snackbarShow = true">Open Snackbar</VBtn> -->
-    <VSnackbar
-      :timeout="defaultSnackbar.timeout"
-      :variant="defaultSnackbar.variant"
-      :color="defaultSnackbar.color"
-      :absolute="defaultSnackbar.absolute"
-      :location="defaultSnackbar.location"
-      v-model="snackbarShow"
-    ></VSnackbar>
+    
+    <teleport to="body">
+        <vue3-snackbar top right :duration="2300"></vue3-snackbar>
+    </teleport>
     <TheLeftSideNavigation @drawerClosed="drawer = false" :drawer="drawer"></TheLeftSideNavigation>
     <TheMainContent></TheMainContent>
   </VApp>
