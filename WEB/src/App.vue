@@ -1,17 +1,20 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import {useSnackbar} from 'vue3-snackbar'
 import TheHeader from './components/TheHeader.vue';
 import TheLeftSideNavigation from './components/TheLeftSideNavigation.vue';
 import TheMainContent from './components/TheMainContent.vue';
 import useEventBus from './composables/eventBus';
+import { useRightDrawerStore } from './stores/rightDrawer.js'
+import TheRightSideDrawer from './components/TheRightSideDrawer.vue'
 
-const drawer = ref(false)
+const navigation = ref(false)
 const snackbar = useSnackbar()
 const {bus} = useEventBus()
+const rightDrawer = useRightDrawerStore()
 
-function changeDrawer(){
-  drawer.value = !drawer.value
+function changeNavigation(){
+  navigation.value = !navigation.value
 }
 
 watch(()=>bus.value.get('triggerToast'), (val)=>{
@@ -19,17 +22,21 @@ watch(()=>bus.value.get('triggerToast'), (val)=>{
   snackbar.add(toast)
 })
 
+function closeRightDrawer(){
+  rightDrawer.close()
+}
+
 </script>
 
 <template>
   <VApp theme="dark">
-    <TheHeader @drawerChange="changeDrawer"></TheHeader>
-    
+    <TheHeader @navigationChange="changeNavigation"></TheHeader>
     <teleport to="body">
         <vue3-snackbar top right :duration="2300"></vue3-snackbar>
     </teleport>
-    <TheLeftSideNavigation @drawerClosed="drawer = false" :drawer="drawer"></TheLeftSideNavigation>
+    <TheLeftSideNavigation @navigationClosed="navigation = false" :navigation="navigation"></TheLeftSideNavigation>
     <TheMainContent></TheMainContent>
+    <TheRightSideDrawer @right-drawer-closed="closeRightDrawer" :open="rightDrawer.isOpen" :data="rightDrawer.data"></TheRightSideDrawer>
   </VApp>
 </template>
 

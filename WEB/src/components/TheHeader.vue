@@ -2,16 +2,16 @@
 import {useRouter} from "vue-router"
 let router = useRouter()
 let props = defineProps({
-  drawer: Boolean
+  navigation: Boolean
 })
 
-let emits = defineEmits(['drawerChange'])
+let emits = defineEmits(['navigationChange'])
 
 </script>
 <template>
     <VAppBar theme="dark">
       <VAppBarTitle style="cursor:pointer" @click="router.push('/')">CodeIgnitor 4 Frontend</VAppBarTitle>
-      <VAppBarNavIcon @click="$emit('drawerChange')"></VAppBarNavIcon>
+      <VAppBarNavIcon @click="$emit('navigationChange')"></VAppBarNavIcon>
     </VAppBar>
 </template>
 

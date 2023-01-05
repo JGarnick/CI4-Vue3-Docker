@@ -1,13 +1,13 @@
 <script setup>
-let emits = defineEmits(['drawerClosed'])
+let emits = defineEmits(['navigationClosed'])
 let props = defineProps({
-    drawer: Boolean
+    navigation: Boolean
 })
 
 </script>
 
 <template>
-    <VNavigationDrawer @update:model-value="$emit('drawerClosed')" :model-value="props.drawer" temporary :border="true" :elevation="10">
+    <VNavigationDrawer @update:model-value="$emit('navigationClosed')" :model-value="props.navigation" temporary :border="true" :elevation="10">
         <VContainer>
             <RouterLink active-class="font-weight-bold" to="lists">Lists</RouterLink>
         </VContainer>

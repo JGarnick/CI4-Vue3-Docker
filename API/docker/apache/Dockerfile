@@ -18,7 +18,8 @@ RUN apt-get install -y \
     libmcrypt-dev \
     libreadline-dev \
     libfreetype6-dev \
-    g++
+    g++ \
+    nano
 
 RUN docker-php-ext-install \
     bz2 \

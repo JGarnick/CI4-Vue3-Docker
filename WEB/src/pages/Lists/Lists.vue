@@ -1,11 +1,30 @@
 <script setup>
-import {ref, onMounted} from "vue";
+import {ref, onMounted, markRaw, reactive} from "vue";
 import API from "../../services/api"
+import {useRightDrawerStore} from '@/stores/rightDrawer.js'
+import NewListForm from '@/components/NewListForm.vue'
 
-let lists = ref([])
-onMounted(async ()=>{
-    lists = await API.get("lists")
+
+let lists = reactive([])
+const newListForm = markRaw(NewListForm)
+
+const rightDrawer = useRightDrawerStore()
+onMounted(()=>{
+    updateLists()
 })
+
+async function updateLists(){
+    lists = await API.get("lists")
+    console.log(lists);
+}
+
+function openCreateForm(){
+    rightDrawer.open({
+        title: "Create Todo List",
+        component: newListForm,
+        callback: ()=>updateLists()
+    })
+}
 
 //TODO: Get a real list of todos from the API
 // let lists = ref([
@@ -183,8 +202,21 @@ let expanded = ref(null)
 
 <template>
     <VWindow>
+        <VRow>
+            <VCol class="justify-center">
+                <v-hover>
+                    <template v-slot:default="{ isHovering, props }">
+                        <VCard @click="openCreateForm" style="cursor:pointer;" :style="[isHovering ? 'background:#545454' : '']" v-bind="props" class="d-flex justify-center" width="150" height="200">
+                            <VIcon class="pt-10" style="font-size: 3em;" color="amber">mdi-plus</VIcon>
+                        </VCard>
+                    </template>
+                </v-hover>
+            </VCol>
+        </VRow>
         <!-- <VWindowItem v-for="page in pages"> -->
             <VRow>
+                
+                {{lists}}
                 <VCol cols="4" v-for="list in lists" :key="`list-${list.id}`">
                     <VCard>
                         <VExpandTransition>
@@ -192,8 +224,8 @@ let expanded = ref(null)
                                 <VCardTitle>{{ list.title }}</VCardTitle>
                                 <VCardSubtitle>{{ list.description }}</VCardSubtitle>
                                 <VCardText class="d-flex">
-                                    <span class="pr-3">Remaining: {{ list.todos.filter(t => !t.complete).length }}</span>
-                                    <span class="pr-3">Completed: {{ list.todos.filter(t => t.complete).length }}</span>
+                                    <span class="pr-3">Remaining: {{ list.todos ? list.todos.filter(t => !t.complete).length : 0 }}</span>
+                                    <span class="pr-3">Completed: {{ list.todos ? list.todos.filter(t => t.complete).length : 0 }}</span>
                                 </VCardText>
                             </div>
                         </VExpandTransition>

@@ -13,14 +13,13 @@ const API = class{
             let response_data = await fetch(this.base_url + path)
                 .then(re => re.json())
                 .then(data => {
-                    console.log("Data:", data);
                     return data;
                 });
                 
-            emit("triggerToast", {type: 'success', text: response_data.details})
-            return response_data.details;
+            emit("triggerToast", {type: 'success', text: response_data.message})
+            return response_data.data;
         }catch(error){
-            emit("triggerToast", {type: 'error', text: 'Hello World'})
+            emit("triggerToast", {type: 'error', text: 'There was a problem fetching the Entities'})
         }
     }
 
@@ -29,21 +28,20 @@ const API = class{
             path = path.replace(/^\/+/, '');
             let response_data = await fetch(this.base_url + path, {
                 method: 'POST',
-                mode: 'cors',
                 headers: {
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             })
             .then(re => re.json())
             .then(data => {
-                console.log("Data:", data);
                 return data;
             });
         
-            return response_data.details;
+            emit("triggerToast", {type: 'success', text: response_data.message})
         } catch (error) {
-            
+            emit("triggerToast", {type: 'error', text: 'There was an error creating the Entity'})
         }
     }
 }

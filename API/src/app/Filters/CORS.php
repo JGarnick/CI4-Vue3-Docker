@@ -18,10 +18,6 @@ class CORS implements FilterInterface
         "*"
     ];
 
-    function __construct(){
-        $this->response = service("response");
-    }
-
     /**
      * Do whatever processing this filter needs to do.
      * By default it should not return anything during
@@ -73,6 +69,7 @@ class CORS implements FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
+        $response_service = service("response");
         // get origins
         if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
             $origin = $_SERVER['HTTP_ORIGIN'];
@@ -81,18 +78,18 @@ class CORS implements FilterInterface
         } else {
             $origin = $_SERVER['REMOTE_ADDR'];
         }
-
+        
         if(in_array("*", $this->allowed_domains)){
-            $this->response->setheader('Access-Control-Allow-Origin', "*");
+            $response_service->setheader('Access-Control-Allow-Origin', "*");
         }
         else if (in_array($origin, $this->allowed_domains)) {
-            $this->response->setheader('Access-Control-Allow-Origin', $origin, true);
+            $response_service->setheader('Access-Control-Allow-Origin', $origin, true);
         }
 
         foreach($this->headers AS $header => $value){
-            $this->response->setheader($header, $value);
+            $response_service->setheader($header, $value);
         }
 
-        return $this->response;
+        return $response_service;
     }
 }
