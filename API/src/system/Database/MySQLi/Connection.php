@@ -95,6 +95,7 @@ class Connection extends BaseConnection
         mysqli_report(MYSQLI_REPORT_ALL & ~MYSQLI_REPORT_INDEX);
 
         $this->mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, 10);
+        $this->mysqli->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE,TRUE);
 
         if (isset($this->strictOn)) {
             if ($this->strictOn) {

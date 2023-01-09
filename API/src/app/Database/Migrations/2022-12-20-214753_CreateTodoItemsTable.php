@@ -26,6 +26,10 @@ class CreateTodoItemsTable extends Migration
             "content" => [
                 "type" => "TEXT",
                 "default" => ""
+            ],
+            "complete" => [
+                "type" => "BIT",
+                "default" => 0
             ]
         ]);
 

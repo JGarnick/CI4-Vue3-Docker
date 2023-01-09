@@ -14,7 +14,7 @@ class TodoItem extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ["title", "description"];
+    protected $allowedFields    = ["title", "description", "complete", "content", "list_id"];
 
     // Dates
     protected $useTimestamps = false;

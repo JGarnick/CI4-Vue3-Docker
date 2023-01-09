@@ -5,7 +5,7 @@ import {useRightDrawerStore} from '@/stores/rightDrawer.js'
 import NewListForm from '@/components/NewListForm.vue'
 
 
-let lists = reactive([])
+let lists = ref([])
 const newListForm = markRaw(NewListForm)
 
 const rightDrawer = useRightDrawerStore()
@@ -14,8 +14,7 @@ onMounted(()=>{
 })
 
 async function updateLists(){
-    lists = await API.get("lists")
-    console.log(lists);
+    lists.value = await API.get("lists")
 }
 
 function openCreateForm(){
@@ -26,177 +25,21 @@ function openCreateForm(){
     })
 }
 
-//TODO: Get a real list of todos from the API
-// let lists = ref([
-//     {
-//         title:"Mock 1",
-//         id: 1,
-//         description:"A todo list for stuff and things",
-//         todos: [
-//             {
-//                 title: "The first thing",
-//                 id: 1,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go. There was more to the description, so here you go.",
-//                 content: "Blah blah and blah. More blah, but not so much blah as to blah blah AND blah. Just the blah, really."
-//             },
-//             {
-//                 title: "The second thing",
-//                 id: 2,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The third thing",
-//                 id: 3,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//         ]
-//     },
-//     {
-//         title:"Mock 2",
-//         id: 2,
-//         description:"A todo list for stuff and things",
-//         todos: [
-//             {
-//                 title: "The first thing",
-//                 id: 4,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The second thing",
-//                 id: 5,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The third thing",
-//                 id: 6,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//         ]
-//     },
-//     {
-//         title:"Mock 3",
-//         id:3,
-//         description:"A todo list for stuff and things",
-//         todos: [
-//             {
-//                 title: "The first thing",
-//                 id: 7,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The second thing",
-//                 id: 8,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The third thing",
-//                 id: 9,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//         ]
-//     },
-//     {
-//         title:"Mock 4",
-//         id: 4,
-//         description:"A todo list for stuff and things",
-//         todos: [
-//             {
-//                 title: "The first thing",
-//                 id: 10,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The second thing",
-//                 id: 11,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The third thing",
-//                 id: 12,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//         ]
-//     },
-//     {
-//         title:"Mock 5",
-//         id: 5,
-//         description:"A todo list for stuff and things",
-//         todos: [
-//             {
-//                 title: "The first thing",
-//                 id: 13,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The second thing",
-//                 id: 14,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The third thing",
-//                 id: 15,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//         ]
-//     },
-//     {
-//         title:"Mock 6",
-//         id:6,
-//         description:"A todo list for stuff and things",
-//         todos: [
-//             {
-//                 title: "The first thing",
-//                 id: 16,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The second thing",
-//                 id: 17,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//             {
-//                 title: "The third thing",
-//                 id: 18,
-//                 complete: false,
-//                 description: "There was more to the description, so here you go",
-//                 content: ""
-//             },
-//         ]
-//     },
-// ])
+async function destroyList(id){
+    await API.destroy("lists", id)
+    updateLists()
+}
+
+async function changeItemStatus(list, itemId){
+    //I cannot just pass the whole todo item with expected changes to this function because this fires before the prop changes for some reason
+    //Very heavy workaround: pass up the parent list along with item.id. Find it in the List.todo_items, then make a shallow copy of the item and manually change
+    //the 'complete' property before sending to API
+ 
+    let item = {...list.todo_items.find(i=>i.id == itemId)}
+    item.complete = !item.complete
+    await API.post("items", item)
+}
+
 let expanded = ref(null)
 </script>
 
@@ -215,24 +58,23 @@ let expanded = ref(null)
         </VRow>
         <!-- <VWindowItem v-for="page in pages"> -->
             <VRow>
-                
-                {{lists}}
-                <VCol cols="4" v-for="list in lists" :key="`list-${list.id}`">
+                <VCol style="max-width:25%" cols="4" v-for="list in lists" :key="`list-${list.id}`">
                     <VCard>
                         <VExpandTransition>
                             <div v-show="expanded != list.id">
                                 <VCardTitle>{{ list.title }}</VCardTitle>
                                 <VCardSubtitle>{{ list.description }}</VCardSubtitle>
                                 <VCardText class="d-flex">
-                                    <span class="pr-3">Remaining: {{ list.todos ? list.todos.filter(t => !t.complete).length : 0 }}</span>
-                                    <span class="pr-3">Completed: {{ list.todos ? list.todos.filter(t => t.complete).length : 0 }}</span>
+                                    <span class="pr-3">Remaining: {{ list.todo_items ? list.todo_items.filter(t => !t.complete).length : 0 }}</span>
+                                    <span class="pr-3">Completed: {{ list.todo_items ? list.todo_items.filter(t => t.complete).length : 0 }}</span>
                                 </VCardText>
                             </div>
                         </VExpandTransition>
                         
-                        <VCardActions>
-                            <VBtn v-if="expanded != list.id" @click="expanded = list.id">Expand</VBtn>
+                        <VCardActions class="justify-space-between">
+                            <VBtn v-if="expanded != list.id" @click="expanded = list.id">View</VBtn>
                             <VBtn v-else-if="expanded == list.id" @click="expanded = null">Close</VBtn>
+                            <VBtn color="red" @click="destroyList(list.id)" icon="mdi-delete-forever"></VBtn>
                         </VCardActions>
 
                         <VExpandTransition>
@@ -241,7 +83,7 @@ let expanded = ref(null)
                                     <VCardText>
                                         <VList density="compact" lines="three">
                                             <VListItem 
-                                                v-for="todo in list.todos"
+                                                v-for="todo in list.todo_items"
                                                 :key="`todo-${todo.id}`"
                                                 :title="todo.title"
                                                 :subtitle="todo.description"
@@ -249,9 +91,9 @@ let expanded = ref(null)
                                             >
                                                 {{ todo.content }}
                                             <template v-slot:prepend="{  }">
-                                                <v-list-item-action start>
-                                                    <v-checkbox-btn v-model="todo.complete"></v-checkbox-btn>
-                                                </v-list-item-action>
+                                                <VListItemAction start>
+                                                    <VCheckboxBtn :true-value="1" :false-value="0" @update:modelValue="changeItemStatus(list, todo.id)" v-model="todo.complete"></VCheckboxBtn>
+                                                </VListItemAction>
                                             </template>
                                             </VListItem>
                                         </VList>

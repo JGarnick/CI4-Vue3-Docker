@@ -28,7 +28,7 @@ let props = defineProps({
 </script>
 
 <template>
-    <VNavigationDrawer class="text-h5" width="400px" clipped location="right" :model-value="props.open" temporary :border="true" :elevation="10">
+    <VNavigationDrawer @update:model-value="rightDrawer.close()" class="text-h5" style="width:400px;" clipped location="right" :model-value="props.open" temporary :border="true" :elevation="10">
         <VContainer>
             <div class="text-center pb-4">{{props.data.title}}</div>
             <component @complete="performCallback" v-if="props.open" :is="props.data.component"></component>

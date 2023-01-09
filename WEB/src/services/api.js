@@ -1,5 +1,6 @@
 import useEventBus from "../composables/eventBus";
 const {emit} = useEventBus()
+const STRIP_SLASHES_PATTERN = "/^\/+|\/+$/"
 
 const API = class{
     #base_url
@@ -9,7 +10,7 @@ const API = class{
 
     async get(path){
         try{
-            path = path.replace(/^\/+/, '');
+            path = path.replace(STRIP_SLASHES_PATTERN, '');
             let response_data = await fetch(this.base_url + path)
                 .then(re => re.json())
                 .then(data => {
@@ -25,7 +26,10 @@ const API = class{
 
     async post(path, data){
         try {
-            path = path.replace(/^\/+/, '');
+            path = path.replace(STRIP_SLASHES_PATTERN, '');
+            if (data.id) {
+                path += `/${data.id}`
+            }
             let response_data = await fetch(this.base_url + path, {
                 method: 'POST',
                 headers: {
@@ -41,7 +45,26 @@ const API = class{
         
             emit("triggerToast", {type: 'success', text: response_data.message})
         } catch (error) {
-            emit("triggerToast", {type: 'error', text: 'There was an error creating the Entity'})
+            let action = data.id ? "updating" : "creating"
+            emit("triggerToast", {type: 'error', text: `There was an error ${action} the Entity`})
+        }
+    }
+
+    async destroy(path, id){
+        try {
+            path = path.replace(STRIP_SLASHES_PATTERN, '') + `/${id}`;
+            console.log(path);
+            let response_data = await fetch(this.base_url + path, {
+                method: 'DELETE',
+            })
+            .then(re => re.json())
+            .then(data => {
+                return data;
+            });
+        
+            emit("triggerToast", {type: 'success', text: response_data.message})
+        } catch (error) {
+            emit("triggerToast", {type: 'error', text: 'There was an error deleting the Entity'})
         }
     }
 }

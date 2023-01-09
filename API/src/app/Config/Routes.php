@@ -37,8 +37,15 @@ $routes->set404Override();
 // route since we don't have to scan directories.
 
 $routes->group('api', static function ($routes) {
-    $routes->get('lists', "TodoListController::index");
-    $routes->post('lists', 'TodoListController::create');
+    $routes->group('lists', static function($routes){
+        $routes->get('/', "TodoListController::index");
+        $routes->post('/', 'TodoListController::create');
+        $routes->delete('(:num)', 'TodoListController::destroy/$1');
+    });
+    
+    $routes->group('items', static function($routes){
+        $routes->post('(:num)', "TodoItemController::update/$1");
+    });
 });
 
 /*

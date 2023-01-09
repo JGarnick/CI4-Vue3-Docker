@@ -6,6 +6,9 @@ use CodeIgniter\Model;
 
 class TodoList extends Model
 {
+    use \Tatter\Relations\Traits\ModelTrait;
+    protected $with = 'todo_items';
+
     protected $DBGroup          = 'default';
     protected $table            = 'todo_lists';
     protected $primaryKey       = 'id';
