@@ -21,9 +21,18 @@ class TodoListController extends BaseController
     {
         try{
             //TODO: Create permissions and check for authorization
-            $lists = $this->model->findAll();
+            $page_data = [
+                "perPage" => (int)$this->request->getGet('perPage') ?? 4,
+                "page"    => (int)$this->request->getGet('page') ?? 1,
+                "total"   => $this->model->countAll()
+            ];
+
+            $data = [
+                'lists' => $this->model->paginate($page_data["perPage"], "default", $page_data["page"]),
+                'page_data' => $page_data
+            ];
             
-            return $this->respond(["data" => $lists, "message" => fetched("Todo Lists")]);
+            return $this->respond(["data" => $data, "message" => fetched("Todo Lists")]);
             
         } catch (\Exception $e) {
             return $this->failServerError($e->getMessage());

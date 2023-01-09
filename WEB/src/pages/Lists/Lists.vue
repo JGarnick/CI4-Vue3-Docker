@@ -1,11 +1,12 @@
 <script setup>
-import {ref, onMounted, markRaw} from "vue";
+import {ref, onMounted, markRaw, reactive} from "vue";
 import API from "../../services/api"
 import {useRightDrawerStore} from '@/stores/rightDrawer.js'
 import listForm from '@/components/ListForm.vue'
 
 
 let lists = ref([])
+let page_data = reactive({perPage:4, page:1, total:0})
 const ListForm = markRaw(listForm)
 
 const rightDrawer = useRightDrawerStore()
@@ -13,15 +14,27 @@ onMounted(()=>{
     updateLists()
 })
 
-async function updateLists(){
-    lists.value = await API.get("lists")
+async function updateLists(page = false){
+    //Weirdly, v-model with VPagination and page_data.page was not working. VPagination.modelValue does not appear to update when a page is clicked
+    if (page) {
+        page_data.page = page
+    }
+    let results = await API.get("lists", page_data)
+    lists.value = results.lists
+    page_data = Object.assign(page_data, results.page_data)
 }
 
-function openListForm(list = false){
+function openListForm(pe, list = false){
     let args = {
         component: ListForm,
         callback: ()=>updateLists(),
-        title: "Create Todo List"
+        title: "Create Todo List",
+        list: {
+            title:"", 
+            description:"", 
+            content:"", 
+            todo_items:[]
+        }
     }
     
     if (list) {
@@ -63,7 +76,6 @@ let expanded = ref(null)
                 </v-hover>
             </VCol>
         </VRow>
-        <!-- <VWindowItem v-for="page in pages"> -->
             <VRow>
                 <VCol style="max-width:25%" cols="4" v-for="list in lists" :key="`list-${list.id}`">
                     <VCard>
@@ -108,16 +120,23 @@ let expanded = ref(null)
                                             </VListItem>
                                         </VList>
                                     </VCardText>
-                                    <VCardActions>
+                                    <!-- <VCardActions>
                                         <VBtn @click="expanded = null">Close</VBtn>
-                                    </VCardActions>
+                                    </VCardActions> -->
                                 </VCard>
                             </div>
                         </VExpandTransition>
                     </VCard>
                 </VCol>
             </VRow>
-        <!-- </VWindowItem> -->
+            <VRow>
+                <VCol>
+                    <VPagination
+                        @update:modelValue="updateLists"
+                        :length="Math.ceil(page_data.total / page_data.perPage)"
+                    ></VPagination>
+                </VCol>
+            </VRow>
     </VWindow>
 </template>
 

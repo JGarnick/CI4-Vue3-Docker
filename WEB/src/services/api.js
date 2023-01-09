@@ -8,9 +8,12 @@ const API = class{
         this.base_url = import.meta.env.VITE_API_ENDPOINT;
     };
 
-    async get(path){
+    async get(path, paginate = false){
         try{
             path = path.replace(STRIP_SLASHES_PATTERN, '');
+            if (paginate) {
+                path += `?perPage=${paginate.perPage}&page=${paginate.page}`
+            }
             let response_data = await fetch(this.base_url + path)
                 .then(re => re.json())
                 .then(data => {

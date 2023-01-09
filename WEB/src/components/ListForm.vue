@@ -6,7 +6,7 @@
     let emit = defineEmits(['complete'])
     const store = useRightDrawerStore()
     
-    const list = store.data.list ? store.data.list : ref({title:"", description:"", content:"", todo_items}).value
+    const list = store.data.list
     let todo = reactive({title:"", description:"", content:"", complete: false})
     
     async function submit(){
