@@ -1,19 +1,21 @@
 <script setup>
-    import {ref, defineEmits, reactive} from 'vue'
+    import {defineEmits, reactive, ref} from 'vue'
     import API from '@/services/api.js'
+    import { useRightDrawerStore } from '../stores/rightDrawer';
 
     let emit = defineEmits(['complete'])
-
-    let list = ref({title: "", description: "", todos:[]})
+    const store = useRightDrawerStore()
+    
+    const list = store.data.list ? store.data.list : ref({title:"", description:"", content:"", todo_items}).value
     let todo = reactive({title:"", description:"", content:"", complete: false})
-
+    
     async function submit(){
-        await API.post("lists", list.value)
+        list.id ? await API.patch("lists", list) : await API.post("lists", list)
         emit('complete')
     }
 
     function addItem(){
-        list.value.todos.push({...todo})
+        list.todo_items.push({...todo})
         todo.title=""
         todo.description=""
         todo.content=""
@@ -21,7 +23,7 @@
     }
 
     function removeItem(index){
-        list.value.todos.splice(index, 1)
+        list.todo_items.splice(index, 1)
     }
 </script>
 
@@ -59,13 +61,29 @@
                 <VCard>
                     <VList density="compact">
                         <v-list-subheader>ITEMS</v-list-subheader>
-                        <VListItem v-for="(item, i) in list.todos" :key="i">
+                        <VListItem v-for="(item, i) in list.todo_items" :key="i">
                             <template v-slot:prepend>
                                 <VBtn @click="removeItem(i)" variant="text" color="error" size="" icon="mdi-delete-forever"></VBtn>
                             </template>
-                            <VListItemTitle v-text="item.title"></VListItemTitle>
-                            <VListItemSubtitle v-text="item.description"></VListItemSubtitle>
-                            {{item.content}}
+                            <VTextField
+                                hide-details
+                                style="min-height: 30px;" 
+                                density="compact" 
+                                :class="{'text-decoration-line-through': item.complete}"
+                                class="pb-2"
+                                v-model="item.title"></VTextField>
+                            <VTextField
+                                hide-details 
+                                style="min-height: 30px;"  
+                                density="compact" 
+                                :class="{'text-decoration-line-through': item.complete}"
+                                class="pb-2"
+                                v-model="item.description"></VTextField>
+                            <VTextarea
+                                rows="2" 
+                                density="compact" 
+                                :class="{'text-decoration-line-through': item.complete}" 
+                                v-model="item.content"></VTextarea>
                         </VListItem>
                     </VList>
                 </VCard>

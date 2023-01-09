@@ -1,12 +1,12 @@
 <script setup>
-import {ref, onMounted, markRaw, reactive} from "vue";
+import {ref, onMounted, markRaw} from "vue";
 import API from "../../services/api"
 import {useRightDrawerStore} from '@/stores/rightDrawer.js'
-import NewListForm from '@/components/NewListForm.vue'
+import listForm from '@/components/ListForm.vue'
 
 
 let lists = ref([])
-const newListForm = markRaw(NewListForm)
+const ListForm = markRaw(listForm)
 
 const rightDrawer = useRightDrawerStore()
 onMounted(()=>{
@@ -17,12 +17,19 @@ async function updateLists(){
     lists.value = await API.get("lists")
 }
 
-function openCreateForm(){
-    rightDrawer.open({
-        title: "Create Todo List",
-        component: newListForm,
-        callback: ()=>updateLists()
-    })
+function openListForm(list = false){
+    let args = {
+        component: ListForm,
+        callback: ()=>updateLists(),
+        title: "Create Todo List"
+    }
+    
+    if (list) {
+        args.title = "Edit Todo List"
+        args.list = list
+    }
+
+    rightDrawer.open(args)
 }
 
 async function destroyList(id){
@@ -37,7 +44,7 @@ async function changeItemStatus(list, itemId){
  
     let item = {...list.todo_items.find(i=>i.id == itemId)}
     item.complete = !item.complete
-    await API.post("items", item)
+    await API.patch("items", item)
 }
 
 let expanded = ref(null)
@@ -49,7 +56,7 @@ let expanded = ref(null)
             <VCol class="justify-center">
                 <v-hover>
                     <template v-slot:default="{ isHovering, props }">
-                        <VCard @click="openCreateForm" style="cursor:pointer;" :style="[isHovering ? 'background:#545454' : '']" v-bind="props" class="d-flex justify-center" width="150" height="200">
+                        <VCard @click="openListForm" style="cursor:pointer;" :style="[isHovering ? 'background:#545454' : '']" v-bind="props" class="d-flex justify-center" width="150" height="200">
                             <VIcon class="pt-10" style="font-size: 3em;" color="amber">mdi-plus</VIcon>
                         </VCard>
                     </template>
@@ -62,7 +69,10 @@ let expanded = ref(null)
                     <VCard>
                         <VExpandTransition>
                             <div v-show="expanded != list.id">
-                                <VCardTitle>{{ list.title }}</VCardTitle>
+                                <VCardTitle class="d-flex justify-space-between">
+                                    <div>{{ list.title }}</div>
+                                    <VBtn icon="mdi-square-edit-outline" @click="openListForm(list)"></VBtn>
+                                </VCardTitle>
                                 <VCardSubtitle>{{ list.description }}</VCardSubtitle>
                                 <VCardText class="d-flex">
                                     <span class="pr-3">Remaining: {{ list.todo_items ? list.todo_items.filter(t => !t.complete).length : 0 }}</span>

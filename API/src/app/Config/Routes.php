@@ -40,11 +40,12 @@ $routes->group('api', static function ($routes) {
     $routes->group('lists', static function($routes){
         $routes->get('/', "TodoListController::index");
         $routes->post('/', 'TodoListController::create');
+        $routes->patch('(:num)', 'TodoListController::update/$1');
         $routes->delete('(:num)', 'TodoListController::destroy/$1');
     });
     
     $routes->group('items', static function($routes){
-        $routes->post('(:num)', "TodoItemController::update/$1");
+        $routes->patch('(:num)', "TodoItemController::update/$1");
     });
 });
 

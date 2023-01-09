@@ -19,12 +19,13 @@ class TodoItemController extends BaseController
     public function update($id)
     {
         try {
+            //I don't check against the URI matched ID because I'm setting it specifically from the data prop on the frontend
             $data = $this->request->getVar();
             $this->model->save($data);
             return $this->respond(["message" => updated("Todo Item")]);
         } catch (\Exception $e) {
-            return $this->failServerError();
-            exit($e->getMessage()); 
+            return $this->failServerError($e->getMessage());
+            exit;
         }
     }
 

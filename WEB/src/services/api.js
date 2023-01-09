@@ -45,8 +45,31 @@ const API = class{
         
             emit("triggerToast", {type: 'success', text: response_data.message})
         } catch (error) {
-            let action = data.id ? "updating" : "creating"
-            emit("triggerToast", {type: 'error', text: `There was an error ${action} the Entity`})
+            emit("triggerToast", {type: 'error', text: 'There was an error creating the Entity'})
+        }
+    }
+    async patch(path, data){
+        try {
+            path = path.replace(STRIP_SLASHES_PATTERN, '');
+            if (data.id) {
+                path += `/${data.id}`
+            }
+            let response_data = await fetch(this.base_url + path, {
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(re => re.json())
+            .then(data => {
+                return data;
+            });
+        
+            emit("triggerToast", {type: 'success', text: response_data.message})
+        } catch (error) {
+            emit("triggerToast", {type: 'error', text: 'There was an error updating the Entity'})
         }
     }
 
