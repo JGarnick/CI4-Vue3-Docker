@@ -3,8 +3,19 @@ services:
     build: 
       context: .
       dockerfile: API/docker/apache/Dockerfile
+      args:
+        # Available [trace|debug|profile|coverage]. Use Comma separated available values for multiple mode
+        # Use "off" to disable xdebug
+        - XDEBUG_MODES=coverage
+        #- XDEBUG_MODES=off
+        # Set the following values to overwrite the existing settings.
+        # Uncomment the following line and change value.
+        #- REMOTE_HOST=host.docker.internal # Host machine IP
+        #- REMOTE_PORT=9003 # IDE/Editor's listener port
+        #- IDE_KEY=docker # IDE's filter/listener key
     volumes:
       - ./API/src:/var/www/html
+      #- /tmp/xdebug:/tmp/xdebug
     restart: always
     container_name: api
     ports:
@@ -13,17 +24,17 @@ services:
       - db
     networks:
       - my-network
-  web:
-    image: node:lts
-    working_dir: /var/www/html/app
-    volumes:
-      - ./WEB:/var/www/html/app
-    restart: always
-    container_name: frontend
-    command: bash -c "npm ci && npm run dev"
-    tty: true
-    ports:
-      - 81:81
+  # web:
+  #   image: node:lts
+  #   working_dir: /var/www/html/app
+  #   volumes:
+  #     - ./WEB:/var/www/html/app
+  #   restart: always
+  #   container_name: frontend
+  #   command: bash -c "npm ci && npm run dev"
+  #   tty: true
+  #   ports:
+  #     - 81:81
   db:
     image: mysql:8
     command: --default-authentication-plugin=mysql_native_password
