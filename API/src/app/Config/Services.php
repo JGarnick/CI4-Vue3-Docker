@@ -3,6 +3,7 @@
 namespace Config;
 
 use CodeIgniter\Config\BaseService;
+use App\MyCodeIgniter;
 
 /**
  * Services Configuration file.
@@ -29,4 +30,15 @@ class Services extends BaseService
      *     return new \CodeIgniter\Example();
      * }
      */
+
+    // public static function codeigniter(App $config = null, bool $getShared = true)
+    // {
+    //     if ($getShared) {
+    //         return static::getSharedInstance('codeigniter', $config);
+    //     }
+
+    //     $config = $config ?? config('App');
+
+    //     return new MyCodeIgniter($config);
+    // }
 }

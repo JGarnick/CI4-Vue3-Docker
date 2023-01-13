@@ -39,4 +39,19 @@ class TodoItem extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public static $name = "Todo Item";
+
+    public function fake(\Faker\Generator &$faker){
+        $listModel = new TodoList();
+        $list_ids = $listModel->findColumn("id");
+        
+        return [
+            "title" => $faker->words(rand(1, 5), true),
+            "description" => $faker->words(rand(3, 10), true),
+            "content" => $faker->text(rand(50, 300)),
+            "list_id" => $list_ids[array_rand($list_ids)],
+            "complete" => $faker->boolean()
+        ];
+    }
 }

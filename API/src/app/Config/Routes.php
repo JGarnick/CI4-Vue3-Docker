@@ -38,6 +38,7 @@ $routes->set404Override();
 $routes->get("/", function(){
     d("HI");
 });
+
 $routes->group('api', static function ($routes) {
     $routes->group('lists', static function($routes){
         $routes->get('/', "TodoListController::index");

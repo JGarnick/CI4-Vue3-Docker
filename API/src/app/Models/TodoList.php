@@ -7,6 +7,7 @@ use CodeIgniter\Model;
 class TodoList extends Model
 {
     use \Tatter\Relations\Traits\ModelTrait;
+
     protected $with = 'todo_items';
 
     protected $DBGroup          = 'default';
@@ -15,6 +16,7 @@ class TodoList extends Model
     protected $useAutoIncrement = true;
     protected $insertID         = 0;
     protected $returnType       = 'array';
+    // protected $returnType       = \App\Entities\TodoList::class;
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = ["title", "description"];
@@ -42,4 +44,13 @@ class TodoList extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public static $name = "Todo List";
+
+    public function fake(\Faker\Generator &$faker){
+        return [
+            "title" => $faker->words(rand(1, 5), true),
+            "description" => $faker->words(rand(3, 10), true)
+        ];
+    }
 }

@@ -5,40 +5,62 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\{TodoList, TodoItem};
 use CodeIgniter\API\ResponseTrait;
+// use CodeIgniter\HTTP\Request;
+// use App\Interfaces\TodoListRepositoryInterface;
 
 class TodoListController extends BaseController
 {
     use ResponseTrait;
 
     private $model, $itemModel;
+    // private $repository;
     
     function __construct(){
         $this->model = new TodoList();
         $this->itemModel = new TodoItem();
     }
 
+    //Testing dependency injection
+    // function __construct(TodoListRepositoryInterface $repository){
+    //     $this->model = new TodoList();
+    //     $this->itemModel = new TodoItem();
+    //     $this->repository = $repository;
+    // }
+
     public function index()
     {
         try{
             //TODO: Create permissions and check for authorization
             $page_data = [
-                "perPage" => (int)$this->request->getGet('perPage') ?? 4,
-                "page"    => (int)$this->request->getGet('page') ?? 1,
+                "perPage" => $this->request->getGet('perPage') ?? 4,
+                "page"    => $this->request->getGet('page') ?? 1,
                 "total"   => $this->model->countAll()
             ];
-
+            
+            //If passed up through query params, 'perPage' and 'page' become strings. Cast to int for consistency
             $data = [
-                'lists' => $this->model->paginate($page_data["perPage"], "default", $page_data["page"]),
+                'lists' => $this->model->paginate((int)$page_data["perPage"], "default", (int)$page_data["page"]),
                 'page_data' => $page_data
             ];
             
-            return $this->respond(["data" => $data, "message" => fetched("Todo Lists")]);
-            
+            return $this->respond(["data" => $data, "message" => fetched($this->model::$name ?? $this->model::class)]);
         } catch (\Exception $e) {
             return $this->failServerError($e->getMessage());
             exit;
         }
     }
+
+    //Testing dependency injection
+    // public function index(Request $request)
+    // {
+    //     try{
+    //         //TODO: Create permissions and check for authorization
+    //         return $this->repository->getAll($request, $this->model);
+    //     } catch (\Exception $e) {
+    //         return $this->failServerError($e->getMessage());
+    //         exit;
+    //     }
+    // }
 
     public function create()
     {
@@ -49,7 +71,7 @@ class TodoListController extends BaseController
                 $todo_item->list_id = $id;
                 $this->itemModel->insert($todo_item);
             }
-            return $this->respond(["message" => created("Todo List")]);
+            return $this->respond(["message" => created($this->model::$name)]);
         } catch (\Exception $e) {
             return $this->failServerError($e->getMessage());
             exit;
@@ -73,7 +95,7 @@ class TodoListController extends BaseController
                 $todo_item->list_id = $id;
                 $this->itemModel->insert($todo_item);
             }
-            return $this->respond(["message" => updated("Todo List")]);
+            return $this->respond(["message" => updated($this->model::$name)]);
         } catch (\Exception $e) {
             return $this->failServerError($e->getMessage());
             exit;
@@ -85,9 +107,9 @@ class TodoListController extends BaseController
         try {
             $this->model->delete($id);
             
-            return $this->respond(["message" => deleted("Todo List")]);
+            return $this->respond(["message" => deleted($this->model::$name)]);
         } catch (\Exception $e) {
-            return $this->failServerError("Internal Server Error", 500, $e->getMessage());
+            return $this->failServerError($e->getMessage());
             exit;
         }
     }
